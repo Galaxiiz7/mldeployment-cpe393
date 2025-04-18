@@ -1,13 +1,21 @@
-# save_model.py
+import pandas as pd
 import pickle
-from sklearn.datasets import load_iris
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 
-iris = load_iris()
-X, y = iris.data, iris.target
+# Load dataset
+df = pd.read_csv("Housing.csv")
 
-model = RandomForestClassifier()
+# Preprocessing
+df = pd.get_dummies(df, drop_first=True)  # One-hot encoding for categorical variables
+
+X = df.drop("price", axis=1)
+y = df["price"]
+
+# Train model
+model = LinearRegression()
 model.fit(X, y)
 
+# Save model and feature columns
 with open("app/model.pkl", "wb") as f:
-    pickle.dump(model, f)
+    pickle.dump((model, X.columns.tolist()), f)
